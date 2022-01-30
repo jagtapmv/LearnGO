@@ -1,1 +1,1 @@
-"Leaning GO from a video tutorail" 
+"Learning GO from a video tutorial" 
