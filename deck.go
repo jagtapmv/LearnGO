@@ -1,8 +1,11 @@
 package main
 
 import (
+	crypto_rand "crypto/rand"
+	"encoding/binary"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"strings"
 )
@@ -49,4 +52,20 @@ func deckFromDrive(filename string) deck {
 	}
 	sDeck := strings.Split(string(data), ",")
 	return deck(sDeck)
+}
+
+func (d deck) shuffle() deck {
+	var b [8]byte
+	_, err := crypto_rand.Read(b[:])
+	if err != nil {
+		panic("cannot seed math/rand package with cryptographically secure random number generator")
+	}
+	source := rand.NewSource(int64(binary.LittleEndian.Uint64(b[:])))
+	r := rand.New(source)
+
+	for i := range d {
+		randCardPosition := r.Intn(len(d))
+		d[i], d[randCardPosition] = d[randCardPosition], d[i]
+	}
+	return d
 }
